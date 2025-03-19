@@ -1,0 +1,73 @@
+Control de versiones con Git
+
+    Diferencia entre control de versiones centralizado y distribuido:
+    Aprendiste que Git es un sistema distribuido donde cada desarrollador tiene una copia completa del proyecto, a diferencia de los sistemas centralizados donde todo dependía de un servidor único.
+
+    Importancia de la configuración de identidad en Git:
+    Configurar tu nombre y correo electrónico es esencial para registrar quién realiza cada cambio en el código.
+
+    Verificación de configuración en Git:
+    Puedes comprobar la configuración con git config --list, lo que te permite ver los datos que Git utilizará en cada commit.
+
+Creación y gestión de repositorios Git
+
+    Diferencia entre repositorio local y remoto:
+    Comprendiste que el repositorio local es donde trabajas directamente en tu computadora, mientras que el repositorio remoto es una copia en la nube (GitHub, GitLab, etc.) que facilita la colaboración.
+
+    Importancia de la carpeta .git:
+    Esta carpeta oculta almacena el historial de cambios, configuraciones y seguimiento de versiones del proyecto.
+
+    Inicialización de un repositorio:
+    Usando git init, Git comienza a rastrear los cambios en el directorio actual.
+
+Organización de proyectos en Git
+
+    Importancia de una estructura organizada:
+    Mantener una organización clara evita confusiones y facilita la colaboración entre desarrolladores.
+
+    Comandos útiles para la estructura de directorios:
+        mkdir para crear múltiples carpetas a la vez.
+        touch para generar archivos vacíos, como README.md.
+
+Flujo de trabajo en Git
+
+    Estados de los archivos en Git (git status):
+        Untracked: El archivo existe pero aún no está bajo seguimiento de Git.
+        Staged: Los archivos han sido añadidos con git add, listos para ser confirmados.
+        Committed: Los cambios fueron guardados en la historia del repositorio con git commit.
+
+    Diferencia entre git add y git commit:
+        git add: Agrega archivos al área de preparación (staging).
+        git commit: Guarda definitivamente los cambios con un mensaje descriptivo.
+
+    Ver historial de commits:
+    Con git log --oneline puedes ver un historial compacto de las versiones del proyecto.
+
+Conexión con un repositorio remoto
+
+    Comando git remote add origin:
+    Conecta el repositorio local con uno remoto en plataformas como GitHub o GitLab.
+
+    Importancia de establecer main como rama principal:
+    Permite definir un punto de referencia común para todo el equipo.
+
+    Sincronización del código:
+        git push sube los cambios al repositorio remoto.
+        git pull trae actualizaciones desde el repositorio remoto al local.
+
+ Entrada y salida en Unix/Linux
+
+    Redirección de salida (> y >>):
+        > sobreescribe un archivo.
+        >> añade contenido al archivo sin borrar lo anterior.
+
+    Redirección de errores (2>):
+    Permite guardar mensajes de error en un archivo separado.
+
+    Uso de pipes (|):
+    Permiten encadenar comandos para que la salida de uno sea la entrada del siguiente, optimizando flujos de trabajo en la terminal.
+
+
+Conclusión
+
+Has adquirido una base sólida en Git y comandos de Unix/Linux. Con estos conocimientos, puedes gestionar proyectos de manera eficiente y colaborar con otros desarrolladores. Ahora, es fundamental practicar para reforzar lo aprendido.
