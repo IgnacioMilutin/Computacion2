@@ -1,0 +1,106 @@
+Resumen General: Multiprocessing en Python
+
+
+🧩 a) Fundamentos de procesos y concurrencia
+
+    Proceso: unidad de ejecución independiente con su propio espacio de memoria.
+
+    Hilo (thread): unidad más ligera que comparte memoria con otros hilos del mismo proceso.
+
+    Multiprocessing: permite ejecutar múltiples procesos en paralelo (aprovecha varios núcleos).
+
+    ❗ Python tiene el GIL (Global Interpreter Lock) que limita la ejecución paralela de hilos, pero no afecta a procesos.
+
+    Ciclo de vida de un proceso:
+
+        Creación → Inicio (start()) → Ejecución → Finalización → Espera del padre (join())
+
+⚙️ b) Creación y gestión de procesos
+
+    Usamos multiprocessing.Process()
+
+    Métodos importantes:
+
+        start(): inicia el proceso.
+
+        join(): espera a que termine.
+
+        is_alive(): verifica si sigue activo.
+
+        current_process(): permite acceder a nombre, PID, etc.
+
+🔄 c) Comunicación entre procesos
+
+    ¿Por qué?: Cada proceso tiene su propia memoria, por lo que no comparten variables.
+
+    Pipes:
+
+        Comunicación entre dos procesos solamente.
+
+        Envío y recepción por extremos (conn1.send(), conn2.recv()).
+
+    Queues:
+
+        Permiten comunicación entre varios procesos.
+
+        Funcionan como una cola segura entre procesos.
+
+    ✅ Preferir Queue para sistemas con más de dos procesos.
+
+🔐 d) Sincronización básica con Lock
+
+    ❗ Problema: condiciones de carrera cuando múltiples procesos acceden/modifican la misma variable.
+
+    Solución: Lock
+
+        lock.acquire() / lock.release()
+
+        O usar con with lock:
+
+    Se utiliza en secciones críticas para que solo un proceso a la vez acceda al recurso.
+
+🧵 e) Pool de procesos
+
+    Para manejar grandes cantidades de procesos fácilmente.
+
+    Se crea con: with Pool(processes=n) as pool:
+
+    Métodos útiles:
+
+        map(): paraleliza sobre un iterable.
+
+        apply(): como una función normal.
+
+        map_async() / apply_async(): ejecución asincrónica.
+
+    Ventaja: menos código repetido, mejor gestión.
+
+📦 f) Memoria compartida básica
+
+    Python permite compartir memoria entre procesos con:
+
+        Value: para un solo dato (ej. un contador).
+
+        Array: para listas de datos.
+
+    Requieren especificar tipo de dato ('i' para int, 'd' para float, etc.)
+
+    Pueden sincronizarse con get_lock() o manualmente con Lock.
+
+✅ Ejercicio Final: mp_worker.py
+
+    Pasaste un código secuencial a uno paralelo real, viendo cómo:
+
+        Se reduce el tiempo total de ejecución.
+
+        Cada proceso trabaja en paralelo.
+
+📘 Preguntas de repaso final
+
+    ¿Por qué multiprocessing puede ejecutar en paralelo real y threading no?
+
+    ¿Cuál es la diferencia práctica entre QuePipe?
+
+    ¿Qué problema soluciona el Lock y qué pasa si no se usa?
+
+    ¿Cuándo conviene usar Pool en vez de Process manual?
