@@ -1,0 +1,7 @@
+python3 server_processing.py -i localhost -p 9001
+
+
+python server_scraping.py -i localhost -p 8000 --processor-host localhost --processor-port 9001
+
+
+python3 client.py -s http://localhost:8000 -u https://example.com -o /home/ignaciomilutin/Documentos/UM/Computacion2/TP2/json_response.json

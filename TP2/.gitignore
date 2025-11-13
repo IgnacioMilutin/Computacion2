@@ -1,0 +1,7 @@
+/home/ignaciomilutin/Documentos/UM/Computacion2/TP2/.gitignore
+/home/ignaciomilutin/Documentos/UM/Computacion2/TP2/venv
+/home/ignaciomilutin/Documentos/UM/Computacion2/TP2/json_response.json
+/home/ignaciomilutin/Documentos/UM/Computacion2/TP2/common/__pycache__
+/home/ignaciomilutin/Documentos/UM/Computacion2/TP2/processor/__pycache__
+/home/ignaciomilutin/Documentos/UM/Computacion2/TP2/scraper/__pycache__
+/home/ignaciomilutin/Documentos/UM/Computacion2/TP2/comandos.txt
