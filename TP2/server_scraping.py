@@ -297,10 +297,10 @@ async def full_scraping_process(url: str) -> Dict:
     domain = urlparse(url).netloc
     
     # 1. Verificar caché
-    # cached_result = cache.get(url)
-    # if cached_result:
-    #     cached_result['from_cache'] = True
-    #     return cached_result
+    cached_result = cache.get(url)
+    if cached_result:
+        cached_result['from_cache'] = True
+        return cached_result
     
     # 2. Rate limiting
     await rate_limiter.wait_if_needed(domain)
@@ -352,7 +352,7 @@ async def full_scraping_process(url: str) -> Dict:
     }
     
     # Guardar en caché
-    # cache.set(url, result)
+    cache.set(url, result)
     
     return result
 
