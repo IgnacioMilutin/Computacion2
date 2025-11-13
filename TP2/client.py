@@ -1,27 +1,11 @@
-#!/usr/bin/env python3
-"""
-Cliente de prueba para el sistema de scraping distribuido.
-Permite probar ambos modos: asíncrono con task_id y síncrono.
-"""
-
 import requests
 import argparse
 import time
 import json
 from typing import Dict
 
-
+# Inicia scrapping de la URL y devuelve el task_id
 def scrape_async(server_url: str, target_url: str) -> str:
-    """
-    Inicia un scraping asíncrono y devuelve el task_id.
-    
-    Args:
-        server_url: URL del servidor (ej: http://localhost:8000)
-        target_url: URL a scrapear
-    
-    Returns:
-        task_id de la tarea creada
-    """
     endpoint = f"{server_url}/scrape"
     
     print(f"Enviando request para scrappear la url: {target_url}")
@@ -43,17 +27,8 @@ def scrape_async(server_url: str, target_url: str) -> str:
         return None
 
 
+# Consulta el estado de la tarea
 def check_status(server_url: str, task_id: str) -> Dict:
-    """
-    Consulta el estado de una tarea.
-    
-    Args:
-        server_url: URL del servidor
-        task_id: ID de la tarea
-    
-    Returns:
-        Dict con información de estado
-    """
     endpoint = f"{server_url}/status/{task_id}"
     try:
         response = requests.get(endpoint, timeout=10)
@@ -67,19 +42,10 @@ def check_status(server_url: str, task_id: str) -> Dict:
         print(f"ERROR. No se pudo consultar estado: {e}")
         return None
 
-def get_result(server_url: str, task_id: str) -> Dict:
-    """
-    Obtiene el resultado de una tarea completada.
-    
-    Args:
-        server_url: URL del servidor
-        task_id: ID de la tarea
-    
-    Returns:
-        Dict con el resultado completo
-    """
-    endpoint = f"{server_url}/result/{task_id}"
 
+# Obtener el resultado de la tarea
+def get_result(server_url: str, task_id: str) -> Dict:
+    endpoint = f"{server_url}/result/{task_id}"
     try:
         response = requests.get(endpoint, timeout=10)
         if response.status_code == 200:
@@ -93,6 +59,8 @@ def get_result(server_url: str, task_id: str) -> Dict:
         print(f"ERROR. No se pudo obtener resultado: {e}")
         return None
     
+
+# Espera a que la tarea se complete
 def wait_for_completion(server_url: str, task_id: str, max_wait: int = 120) -> Dict: 
 
     print(f"Esperando completación de tarea {task_id}...") 
@@ -121,13 +89,8 @@ def wait_for_completion(server_url: str, task_id: str, max_wait: int = 120) -> D
     return None
 
 
+# Imprime una muestra de los resultados
 def print_result(result: Dict):
-    """
-    Imprime el resultado de forma legible.
-    
-    Args:
-        result: Dict con el resultado del scraping
-    """
     if not result:
         return
     
@@ -179,14 +142,8 @@ def print_result(result: Dict):
     print("\n" + "=" * 80)
 
 
+# Descarga el resultado en un archivo JSON
 def save_result_to_file(result: Dict, filename: str):
-    """
-    Guarda el resultado en un archivo JSON.
-    
-    Args:
-        result: Dict con el resultado
-        filename: Nombre del archivo
-    """
     if not filename.endswith('.json'):
         filename = f"{filename}.json"
 
@@ -196,7 +153,6 @@ def save_result_to_file(result: Dict, filename: str):
 
 
 def main():
-    """Función principal del cliente"""
     parser = argparse.ArgumentParser(
         description='Cliente para sistema de scraping distribuido',
         formatter_class=argparse.RawDescriptionHelpFormatter,

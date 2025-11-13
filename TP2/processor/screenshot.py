@@ -1,13 +1,10 @@
-"""
-Generación de screenshots de páginas web usando Playwright.
-"""
-
 import base64
 import time
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
 from common.errors import ProcessingError
 
 
+# Genera un screenshot de la página web
 def generate_screenshot(
     url: str,
     full_page: bool = True,
@@ -16,50 +13,30 @@ def generate_screenshot(
     timeout: int = 30000,
     max_size_mb: int = 5
 ) -> str:
-    """
-    Genera un screenshot de una página web.
     
-    Args:
-        url: URL de la página
-        full_page: Si True, captura la página completa (con scroll)
-        width: Ancho del viewport
-        height: Alto del viewport
-        timeout: Timeout en milisegundos
-    
-    Returns:
-        String con la imagen en base64
-    
-    Raises:
-        ProcessingError: Si hay problemas al generar el screenshot
-    """
     retries = 3
     delay = 1
 
     for attempt in range(retries):
         try:
             with sync_playwright() as p:
-                # Lanzar browser en modo headless
                 browser = p.chromium.launch(
                     headless=True,
                     args=['--no-sandbox', '--disable-setuid-sandbox']
                 )
                 
-                # Crear contexto con viewport específico
                 context = browser.new_context(
                     viewport={'width': width, 'height': height},
                     user_agent='Mozilla/5.0 Web Scraper Bot'
                 )
                 
-                # Crear página y navegar
                 page = context.new_page()
                 
                 try:
                     page.goto(url, timeout=timeout, wait_until='networkidle')
                 except PlaywrightTimeout:
-                    # Si timeout, intentar con domcontentloaded
                     page.goto(url, timeout=timeout, wait_until='domcontentloaded')
                 
-                # Tomar screenshot
                 screenshot_bytes = page.screenshot(
                     full_page=full_page,
                     type='png'
@@ -68,7 +45,6 @@ def generate_screenshot(
                 screenshot_size_mb = len(screenshot_bytes) / (1024 * 1024)
                 if screenshot_size_mb > max_size_mb:
                     if full_page:
-                        # Reintentar sin full_page
                         screenshot_bytes = page.screenshot(full_page=False, type='png')
                         screenshot_size_mb = len(screenshot_bytes) / (1024 * 1024)
                         if screenshot_size_mb > max_size_mb:
@@ -82,11 +58,9 @@ def generate_screenshot(
                             f"({screenshot_size_mb:.2f} MB reales)"
                         )
                 
-                # Cerrar todo
                 context.close()
                 browser.close()
                 
-                # Convertir a base64
                 return base64.b64encode(screenshot_bytes).decode('utf-8')
         
         except Exception as e:

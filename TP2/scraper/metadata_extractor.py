@@ -1,24 +1,11 @@
-"""
-Extractor de metadatos de páginas web.
-"""
-
 from bs4 import BeautifulSoup
 from typing import Dict, Optional
 
 
+# Extrae metadatos de la pagina
 def extract_metadata(html_content: str) -> Dict[str, any]:
-    """
-    Extrae todos los metadatos relevantes de una página.
-    
-    Args:
-        html_content: Contenido HTML
-    
-    Returns:
-        Dict con metadatos estructurados
-    """
     html = BeautifulSoup(html_content, "lxml")
 
-    # Llamar a las funciones auxiliares
     meta_tags = {}
     meta_tags.update(_extract_basic_meta(html))
     meta_tags.update(_extract_open_graph(html))
@@ -26,16 +13,8 @@ def extract_metadata(html_content: str) -> Dict[str, any]:
     return meta_tags
 
 
+# Extrae metadatos descripciones y keywords de la pagina
 def _extract_basic_meta(html: BeautifulSoup) -> Dict[str, str]:
-    """
-    Extrae meta tags básicos como description y keywords.
-
-    Args:
-        html: Objeto BeautifulSoup
-
-    Returns:
-        Diccionario con meta tags básicos
-    """
     meta_info = {}
     for name in ["description", "keywords"]:
         tag = html.find("meta", attrs={"name": name})
@@ -44,16 +23,8 @@ def _extract_basic_meta(html: BeautifulSoup) -> Dict[str, str]:
     return meta_info
 
 
+# Extrae metadatos Open Graph de la pagina
 def _extract_open_graph(html: BeautifulSoup) -> Dict[str, str]:
-    """
-    Extrae meta tags del tipo Open Graph (og:*)
-
-    Args:
-        html: Objeto BeautifulSoup
-
-    Returns:
-        Diccionario con tags Open Graph
-    """
     og_info = {}
     for tag in html.find_all("meta", attrs={"property": lambda x: x and x.startswith("og:")}):
         prop = tag.get("property")

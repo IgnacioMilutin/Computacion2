@@ -1,7 +1,3 @@
-"""
-Análisis de rendimiento de páginas web.
-"""
-
 import time
 from urllib.parse import urljoin
 import requests
@@ -10,28 +6,14 @@ from bs4 import BeautifulSoup
 from common.errors import ProcessingError
 
 
+# Analiza el rendimiento de la página
 def analyze_performance(url: str, timeout: int = 30) -> Dict[str, any]:
-    """
-    Analiza el rendimiento de una página web.
-    
-    Args:
-        url: URL a analizar
-        timeout: Timeout en segundos
-    
-    Returns:
-        Dict con métricas de rendimiento
-    
-    Raises:
-        ProcessingError: Si hay errores en el análisis
-    """
-
     max_size_html = 5 * 1024 * 1024  # 5MB
     retries=3
     delay=1
 
     for attempt in range(retries):
         try:
-            # Medir tiempo de carga de HTML principal
             start_time = time.time()
             
             response = requests.get(
@@ -43,9 +25,8 @@ def analyze_performance(url: str, timeout: int = 30) -> Dict[str, any]:
 
             end_time = time.time()
             
-            load_time = (end_time - start_time) * 1000  # Convertir a ms
+            load_time = (end_time - start_time) * 1000 
             
-            # Tamaño del HTML
             html_size = len(response.content)
 
             if html_size > max_size_html:
@@ -53,13 +34,10 @@ def analyze_performance(url: str, timeout: int = 30) -> Dict[str, any]:
                     f"La página {url} excede el tamaño máximo permitido de {max_size_html / (1024*1024)} MB"
                 )
             
-            # Parsear para encontrar recursos
             html = BeautifulSoup(response.text, 'lxml')
             
-            # Analizar recursos
             resources = analyze_resources(html,url)
             
-            # Calcular métricas
             total_size = html_size + resources['total_size']
             
             return {
@@ -79,10 +57,8 @@ def analyze_performance(url: str, timeout: int = 30) -> Dict[str, any]:
             raise ProcessingError(f"Error inesperado al analizar rendimiento: {e}")
 
 
+# Analiza los recursos de la página
 def analyze_resources(html: BeautifulSoup, base_url: str) -> Dict[str, any]:
-    """
-    Calcula una estimación simple del número y peso total de recursos.
-    """
     resources = {
         'count': 0,
         'total_size': 0
@@ -107,11 +83,9 @@ def analyze_resources(html: BeautifulSoup, base_url: str) -> Dict[str, any]:
     for res_url in resource_urls:
         resources['count'] += 1
         try:
-            # Primero intentar HEAD
             head = requests.head(res_url, timeout=5, allow_redirects=True)
             size = int(head.headers.get('Content-Length', 0))
 
-            # Si no se obtuvo tamaño, intentar GET parcial
             if size == 0 or size==None:
                 get_resp = requests.get(res_url, timeout=10, stream=True)
                 size = 0
@@ -123,7 +97,6 @@ def analyze_resources(html: BeautifulSoup, base_url: str) -> Dict[str, any]:
             resources['total_size'] += size
 
         except Exception:
-            # Si un recurso falla, simplemente lo omitimos
             continue
 
     return resources

@@ -72,6 +72,10 @@ Instalar dependencias:
 ```
 pip install -r requirements.txt
 ```
+```
+playwright install chromium #Luego de instalar requirements, para sacar screenshots se necesita intalar el navegador que utiliza playwright
+
+```
 
 Ejecutar servidor de scrapping "A":
 ```

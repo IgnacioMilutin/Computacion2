@@ -1,8 +1,3 @@
-"""
-Excepciones personalizadas para el sistema de scraping distribuido.
-"""
-
-
 class ScrapingError(Exception):
     """Error base para problemas de scraping"""
     pass

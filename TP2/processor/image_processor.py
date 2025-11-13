@@ -1,7 +1,3 @@
-"""
-Procesamiento de imágenes y generación de thumbnails.
-"""
-
 import time
 import io
 import base64
@@ -13,26 +9,14 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
 
+# Extrae imagenes de la URL y las envia a procesar
 def extract_and_process_images(url: str, max_images: int = 5):
-        """
-        Extrae imágenes de la URL y las procesa.
-        Esta función se ejecuta en un proceso separado.
-        
-        Args:
-            url: URL a procesar
-            max_images: Número máximo de imágenes a procesar
-        
-        Returns:
-            Lista de thumbnails procesados
-        """
-        
         max_size_html = 5 * 1024 * 1024
         retries=3
         delay=1
 
         for attempt in range(retries):
             try:
-                # Fetch HTML
                 response = requests.get(
                     url, 
                     timeout=30, 
@@ -47,13 +31,11 @@ def extract_and_process_images(url: str, max_images: int = 5):
 
                 html = BeautifulSoup(response.text, 'lxml')
                 
-                # Extraer URLs de imágenes
                 image_urls = []
                 for img in html.find_all('img', src=True)[:max_images * 2]:
                     src = urljoin(url, img['src'])
                     image_urls.append(src)
                 
-                # Procesar imágenes
                 return process_images(image_urls[:max_images], max_images)
             
             except requests.RequestException as e:
@@ -71,6 +53,7 @@ def extract_and_process_images(url: str, max_images: int = 5):
                 raise ProcessingError(f"Error inesperado al procesar imágenes de {url}: {e}")
 
 
+# Procesa las imagenes individualemente
 def process_images(image_urls: List[str], max_images: int = 5) -> List[Dict[str, str]]:
     """
     Descarga y procesa imágenes generando thumbnails.
@@ -107,27 +90,9 @@ def process_images(image_urls: List[str], max_images: int = 5) -> List[Dict[str,
     return results
 
 
-def generate_thumbnail(
-    image_url: str,
-    size: Tuple[int, int] = (200, 200),
-    quality: int = 85
-) -> str:
-    """
-    Genera un thumbnail optimizado de una imagen.
-    
-    Args:
-        image_url: URL de la imagen
-        size: Tupla (ancho, alto) del thumbnail
-        quality: Calidad JPEG (1-100)
-    
-    Returns:
-        Thumbnail en base64
-    
-    Raises:
-        ProcessingError: Si hay errores al generar thumbnail
-    """
+# Genera thumbnails a partir de las imagenes
+def generate_thumbnail(image_url: str,size: Tuple[int, int] = (200, 200),quality: int = 85) -> str:
     try:
-        # Descargar imagen
         response = requests.get(
             image_url,
             timeout=10,
@@ -137,39 +102,31 @@ def generate_thumbnail(
 
         content_type = response.headers.get('Content-Type', '').lower()
 
-        # No es una imagen
         if not content_type.startswith('image/'):
             raise ProcessingError(
                 f"La URL no devuelve una imagen válida (Content-Type: {content_type})"
             )
 
-        # Es SVG (no soportado por Pillow)
         if 'svg' in content_type:
             raise ProcessingError(
                 f"Formato SVG no soportado para la imagen: {image_url}"
             )
         
-        # Abrir con PIL
         image = Image.open(io.BytesIO(response.content))
         
-        # Convertir RGBA a RGB si es necesario
         if image.mode == 'RGBA':
-            # Crear fondo blanco
             background = Image.new('RGB', image.size, (255, 255, 255))
-            background.paste(image, mask=image.split()[3])  # Alpha channel como mask
+            background.paste(image, mask=image.split()[3])
             image = background
         elif image.mode not in ('RGB', 'L'):
             image = image.convert('RGB')
         
-        # Generar thumbnail (mantiene aspect ratio)
         image.thumbnail(size, Image.Resampling.LANCZOS)
         
-        # Convertir a bytes
         buffer = io.BytesIO()
         image.save(buffer, format='JPEG', quality=quality, optimize=True)
         buffer.seek(0)
         
-        # Codificar en base64
         return base64.b64encode(buffer.getvalue()).decode('utf-8')
     
     except requests.RequestException as e:

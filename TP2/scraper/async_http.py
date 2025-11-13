@@ -1,7 +1,3 @@
-"""
-Cliente HTTP asíncrono para fetching de URLs.
-"""
-
 import aiohttp
 import asyncio
 from typing import Dict, Optional
@@ -9,22 +5,9 @@ from urllib.parse import urlparse
 from common.errors import ScrapingError, InvalidURLError
 
 
+# Realiza un fetch de la URL dada
 async def fetch_url(url: str, timeout: int = 30, retries: int = 3) -> Dict[str, any]:
-    """
-    Realiza un fetch asíncrono de una URL.
-    
-    Args:
-        url: URL a fetchear
-        timeout: Timeout en segundos
-    
-    Returns:
-        Dict con 'html', 'status', 'headers', 'url_final'
-    
-    Raises:
-        InvalidURLError: Si la URL es inválida
-        ScrapingError: Si hay problemas al hacer fetch
-    """
-    # Validar URL
+
     if not _is_valid_url(url):
         raise InvalidURLError(f"URL inválida: {url}")
     
@@ -62,16 +45,8 @@ async def fetch_url(url: str, timeout: int = 30, retries: int = 3) -> Dict[str, 
     raise ScrapingError(f"No se pudo acceder a {url} tras {retries} intentos. ERROR: {last_exception}")
 
 
+# Valida y corrige formato de la URL
 def _is_valid_url(url: str) -> bool:
-    """
-    Valida que una URL tenga formato correcto.
-    
-    Args:
-        url: URL a validar
-    
-    Returns:
-        True si es válida, False en caso contrario
-    """
     try:
         result = urlparse(url)
         return all([result.scheme in ('http', 'https'), result.netloc])
